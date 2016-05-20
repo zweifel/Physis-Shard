@@ -76,3 +76,7 @@ A series of trials can be run by using the script mean_curve.sh
 An agent needs to implement the Reinforcement_Agent.h while a problem needs to implement the Reinforcement_Environment.h.
 There are simple examples of agents and problems inside respectively the agents/ and environments/ directories.
 Most of the examples were built with the general reinforcement learning in mind, however they can be applied to supervised learning as well as unsupervised learning (e.g., consider the reward from the system as an error).
+
+## License
+
+Apache License Version 2.0

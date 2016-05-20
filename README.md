@@ -4,13 +4,27 @@ Physis Shard is a framework for developing learning systems.
 It defines basically two simple interfaces that allows easy addition of agents and problems.
 In other words, to add agents or problems they only need to implement these interfaces.
 
+## Contents
+
+Agents:
+ - **S**pectrum-diverse **U**nified **N**euron **E**volution **A**rchitecture (SUNA) 
+ - Random agent (named Mysterious_Agent)
+ - Dummy agent (the user define its output every iteration)
+
+Environments (i.e., Problems):
+ - Mountain Car
+ - Double Cart Pole (with and without velocities)
+ - Function Approximation
+ - Multiplexer
+ - Single Cart Pole
+ 
 ## Install 
 
 This library depends on the zweifel library.
 You can install it from the git address:
 https://github.com/zweifel/zweifel
 
-After installing the zweifel library, define its path on the Makefile.
+After installing the zweifel library, its full path need to be defined in the Physis Shard's Makefile.
 In other words, change the following variable in the Makefile to point to zweifel library's correct installing location:
 ```
 PATH_TO_ZWEIFEL_LIBRARY=/home/user/zweifel

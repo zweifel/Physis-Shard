@@ -1,0 +1,17 @@
+
+
+--- Growing Explanation ---
+
+should stop growing (see as a TODO):
+- useful - when the users are satisfied with the results
+- helplessness - even growing, does not improve
+
+
+For now, the following is IMPLEMENTED:
+After growing_turn inputs are entered, the som_map try to grow()
+it will effectively grow in size only if the map_error is bigger than the map_threshold
+
+The growing_turn was set directly related to the size (height*width) of the som_map, then it will take more time to occur in bigger som_maps. This is important since the error in bigger som_maps may also take longer to accumulate.
+
+----------
+

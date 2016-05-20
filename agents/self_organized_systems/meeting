@@ -1,0 +1,38 @@
+kinyoubi 16:00
+
+-ASSOM
+
+-PCA (recursive PCA?)
+
+-GSOM + image (edge detection?)
+-GSOM + image + subsampling
+
+problem:
+-GSOM + image + subsampling + GSOM
+
+objective:
++shape model (loose models, no strict relation between them)
++shape's shapes (shapes within shapes. SIFT and Constellation ideas, relation between shapes are important)
++incorporate color (composite models?)
+
+variances: 
+-model differences -> how many SOMs?
+-use ASSOM?
+-similar photos with different results - illuminance problems? -> contrast enhancement
+
+
+less important:
+-growing problem -> parameters are still hard to define
+
+
+rgb 
+SOM with correction
+contrast
+ASSOM
+papers on segmentation
+
+ASSOM/SOM with non divided input
+2x2 ASSOM for attention
+ASSOM flow- ideas
+From optimization
+Problems with 2d models

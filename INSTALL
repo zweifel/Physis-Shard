@@ -1,0 +1,20 @@
+
+This library depends on the zweifel library.
+You can install it from the git address:
+https://github.com/zweifel/zweifel
+
+After installing the zweifel library, define its path on the Makefile.
+In other words, change the following variable in the Makefile to point to zweifel library's correct installing location:
+PATH_TO_ZWEIFEL_LIBRARY=/home/user/zweifel
+
+Run make afterwards:
+make
+
+It should produce two executables: rl and rl_live.
+To run tests run:
+./rl
+
+At the end of the test, the best solution's dna will be saved with the name dna_best_individual
+
+To test this final solution run:
+./rl_test dna_best_individual

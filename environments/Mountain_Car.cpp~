@@ -1,0 +1,240 @@
+
+#include"Mountain_Car.h"
+
+Mountain_Car::Mountain_Car(Random* random)
+{
+	trial=-1;
+	last_change=-1;
+	this->random= random;
+	MAX_STEPS= MAX_MOUNTAIN_CAR_STEPS;
+
+	mcar_min_position= MCAR_MIN_POSITION;
+	mcar_max_position= MCAR_MAX_POSITION;
+	mcar_max_velocity= MCAR_MAX_VELOCITY;
+	mcar_goal_position= MCAR_GOAL_POSITION;
+	
+	mcar_velocity = 0.0;
+		
+	original_value=true;
+     	
+	normalized_observation=false;	
+     	normalized_action=false;	
+}
+
+Mountain_Car::~Mountain_Car()
+{
+
+}
+
+void Mountain_Car::start(int &number_of_observation_vars, int& number_of_action_vars)
+{
+	number_of_observation_vars= 2;
+	this->number_of_observation_vars= 2;
+	observation= (double*) malloc(number_of_observation_vars*sizeof(double));
+
+#ifdef	CONTINUOUS_MOUNTAIN_CAR	
+	number_of_action_vars=1;
+#else
+	number_of_action_vars=3;
+#endif
+	this->number_of_action_vars=number_of_action_vars;
+
+	// Initialize state of Car
+	restart();
+}
+
+double Mountain_Car::step(double* action)
+{
+	// initial reward
+	if(action==NULL)
+	{
+		return -1;
+		//return 1/(x*x + theta*theta + 0.001);             
+	}
+
+	double a;
+
+
+	/*
+	if(action[0] > action[1])
+	{
+		a= 0.0;
+	}
+	if(action[1] > action[0])
+	{
+		a= 2.0;
+	}
+	*/
+
+
+#ifdef	CONTINUOUS_MOUNTAIN_CAR	
+	if(normalized_action)
+	{
+		//supposing that the action's range is [0,1]:
+		a= (action[0] - 0.5)*2.0;
+	}
+	else
+	{
+		a = action[0];
+	}
+	
+	if(a<-1.0)
+	{
+		a=-1.0;
+	}
+	if(a>1.0)
+	{
+		a=1.0;
+	}
+
+	// Take action a, update state of car
+	mcar_velocity += (a)*0.001 + cos(3.0*mcar_position)*(-0.0025);
+#else
+	//Discrete Action Mountain Cart
+	
+	//For discrete actions, the range of the action is of no concern (i.e., normalized_action does not play a role)
+		
+	if(action[0] > action[1] && action[0] > action[2])
+	{
+		a= 0.0;
+	}
+	if(action[1] > action[0] && action[1] > action[2])
+	{
+		a= 1.0;
+	}
+	if(action[2] > action[0] && action[2] > action[1])
+	{
+		a= 2.0;
+	}
+
+	// Take action a, update state of car
+	mcar_velocity += (a-1.0)*0.001 + cos(3.0*mcar_position)*(-0.0025);
+#endif
+	
+
+	//limit the car's velocity
+	if(mcar_velocity > mcar_max_velocity)
+	{
+		mcar_velocity = mcar_max_velocity;
+	}
+	if(mcar_velocity < -mcar_max_velocity)
+	{
+		mcar_velocity = -mcar_max_velocity;
+	}
+	
+	mcar_position += mcar_velocity;
+	
+	//limit the car's position
+	if (mcar_position > mcar_max_position) mcar_position = mcar_max_position;
+	if (mcar_position < mcar_min_position) mcar_position = mcar_min_position;
+
+	//stop the car, if it hits the min_position
+	if (mcar_position==mcar_min_position && mcar_velocity<0) mcar_velocity = 0;
+
+#ifdef	NOISY_MOUNTAIN_CAR
+	if(normalized_observation)
+	{
+
+	}
+	else
+	{
+		//observation[0]= mcar_position + random->gaussian(0,0.125);
+		//observation[1]= mcar_velocity + random->gaussian(0,0.0175);
+		observation[0]= mcar_position + random->gaussian(0,0.06);
+		observation[1]= mcar_velocity + random->gaussian(0,0.009);
+	}
+#else
+	if(normalized_observation)
+	{
+		//the maximum and minimum position differ, therefore I use the absolute biggest value which is the minimum
+		observation[0]=mcar_position/fabs(mcar_min_position);		
+		observation[1]=mcar_velocity/mcar_max_velocity;		
+	}
+	else
+	{
+		observation[0]= mcar_position;
+		observation[1]= mcar_velocity;
+		//observation[2]= mcar_max_velocity;
+	}
+#endif
+
+	// Is Car within goal region?
+	if(mcar_position >= mcar_goal_position)
+	{
+		restart();
+		return 0;
+	}
+
+	return -1;
+}
+
+void Mountain_Car::print()
+{
+	printf("position %f velocity %f\n",mcar_position, mcar_velocity);
+}
+
+double Mountain_Car::restart()
+{
+	trial++;
+
+#ifdef CHANGING_MCAR_MAX_VELOCITY
+	if(trial % MCAR_TRIALS_TO_CHANGE==0 && trial != last_change)
+	{
+		last_change=trial;
+
+		if(original_value==true)
+		{
+			mcar_max_velocity= MODIFIED_MCAR_MAX_VELOCITY;
+			original_value=false;
+			//printf("changing to modified\n");
+		}
+		else
+		{
+			mcar_max_velocity= MCAR_MAX_VELOCITY;
+			original_value=true;
+			//printf("changing to original\n");
+		}
+	}
+#endif
+	//printf("%d %f\n",trial, mcar_max_velocity);	
+
+	// Initialize state of Car
+	mcar_position = -0.5;
+	mcar_velocity = 0.0;
+	
+#ifdef	NOISY_MOUNTAIN_CAR
+	//observation[0]= mcar_position + random->gaussian(0,0.125);
+	//observation[1]= mcar_velocity + random->gaussian(0,0.0175);
+	observation[0]= mcar_position + random->gaussian(0,0.06);
+	observation[1]= mcar_velocity + random->gaussian(0,0.009);
+#else
+	observation[0]= mcar_position;
+	observation[1]= mcar_velocity;
+	//observation[2]= mcar_max_velocity;
+#endif
+
+	return -1;
+}
+
+bool Mountain_Car::set(int feature)
+{
+	switch(feature)
+	{
+		case NORMALIZED_OBSERVATION:
+		{
+			normalized_observation=true;
+			return true;
+		}
+		break;
+		case NORMALIZED_ACTION:
+		{
+			normalized_action=true;
+			return true;
+		}
+		break;
+		default:
+		{
+			return false;
+		}
+	}
+}

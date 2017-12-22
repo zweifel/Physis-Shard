@@ -213,7 +213,7 @@ void Module::weightMutation()
 
 		//	double previous_weight= c[i].weight;
 				
-				double perturbation= random->uniform(variance,variance);
+				double perturbation= random->uniform(-variance,variance);
 				//printf("variance %f pert %f\n",variance, perturbation);
 				c[i].weight+= perturbation;
 			

@@ -45,7 +45,7 @@ At the end of the test, the best solution's dna will be saved with the name dna_
 
 To test this final solution run:
 ```
-./rl_test dna_best_individual
+./rl_live dna_best_individual
 ```
 
 ## Changing Environments 
